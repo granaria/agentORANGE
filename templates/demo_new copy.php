@@ -2,870 +2,438 @@
 <html lang="en">
 
 <head>
-    <meta charset="utf-8">
-    <title>QuantAgent - Multi-Agent Trading System</title>
-    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>granariaTWO</title>
+
+    <!-- Google Fonts + Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+    <!-- External Google-style CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/granaria.css') }}">
+
+    <!-- Font Awesome for crypto icons -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+
+
+
+
+
+
+<!--
     <style>
-                 :root {
-             --etrade-purple: #241056;
-             --etrade-purple-light: #5627D8;
-             --etrade-purple-dark: #1A0B3A;
-             --etrade-purple-bg: #F8F5FF;
-            --white: #ffffff;
-            --gray-50: #F9FAFB;
-            --gray-100: #F3F4F6;
-            --gray-200: #E5E7EB;
-            --gray-300: #D1D5DB;
-            --gray-400: #9CA3AF;
-            --gray-500: #6B7280;
-            --gray-600: #4B5563;
-            --gray-700: #374151;
-            --gray-800: #1F2937;
-            --gray-900: #111827;
+        :root {
+            --bg: #F8F9FA;
+            --surface: #FFFFFF;
+            --text-primary: #202124;
+            --text-secondary: #5F6368;
+            --border: #DADCE0;
+            --accent: #1A73E8;
+            --accent-hover: #1557B0;
+            --success: #137333;
+            --success-bg: #E6F4EA;
+            --shadow-1: 0 1px 3px rgba(0,0,0,0.12);
+            --shadow-2: 0 4px 10px rgba(0,0,0,0.1);
+            --shadow-3: 0 8px 25px rgba(0,0,0,0.12);
+            --radius: 16px;
+            --radius-sm: 12px;
         }
 
-        * {
-            box-sizing: border-box;
-            border-width: 0;
-            border-style: solid;
-            border-color: #e5e7eb;
-        }
+        *, *::before, *::after { box-sizing: border-box; }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: var(--etrade-purple-bg);
-            color: var(--gray-800);
-            line-height: 1.6;
             margin: 0;
-            padding: 0;
+            font-family: 'Roboto', system-ui, sans-serif;
+            background: var(--bg);
+            color: var(--text-primary);
+            line-height: 1.6;
         }
 
-        .flex { display: flex; }
-        .flex-col { flex-direction: column; }
-        .min-h-screen { min-height: 100vh; }
-        .overflow-hidden { overflow: hidden; }
-        .absolute { position: absolute; }
-        .relative { position: relative; }
-        .w-full { width: 100%; }
-        .z-30 { z-index: 30; }
-        .max-w-6xl { max-width: 72rem; }
-        .mx-auto { margin-left: auto; margin-right: auto; }
-        .px-4 { padding-left: 1rem; padding-right: 1rem; }
-        .sm\:px-6 { padding-left: 1.5rem; padding-right: 1.5rem; }
-        .items-center { align-items: center; }
-        .justify-between { justify-content: space-between; }
-        .h-16 { height: 4rem; }
-        .md\:h-20 { height: 5rem; }
-        .shrink-0 { flex-shrink: 0; }
-        .mr-4 { margin-right: 1rem; }
-        .grow { flex-grow: 1; }
-        .justify-end { justify-content: flex-end; }
-        .flex-wrap { flex-wrap: wrap; }
-        .ml-3 { margin-left: 0.75rem; }
-        .block { display: block; }
-        .text-slate-100 { color: #f1f5f9; }
-        .bg-slate-800 { background-color: #1e293b; }
-        .hover\:bg-slate-900:hover { background-color: #0f172a; }
-        .group { }
-        .shadow-sm { box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05); }
-        .inline-flex { display: inline-flex; }
-        .tracking-normal { letter-spacing: 0; }
-        .text-etrade-purple { color: var(--etrade-purple); }
-        .group-hover\:translate-x-0\.5:hover { transform: translateX(0.125rem); }
-        .transition-transform { transition-property: transform; }
-        .duration-150 { transition-duration: 150ms; }
-        .ease-in-out { transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1); }
-        .ml-2 { margin-left: 0.5rem; }
-        .fill-current { fill: currentColor; }
-        .grow { flex-grow: 1; }
-        .pt-36 { padding-top: 9rem; }
-        .md\:pt-40 { padding-top: 10rem; }
-        .md\:pb-20 { padding-bottom: 5rem; }
-        .max-w-xl { max-width: 36rem; }
-        .md\:max-w-none { max-width: none; }
-        .text-center { text-align: center; }
-        .md\:text-left { text-align: left; }
-        .md\:w-\[600px\] { width: 600px; }
-        .h1 { font-size: 3rem; font-weight: 700; line-height: 1.2; }
-        .text-white { color: #ffffff; }
-        .mb-6 { margin-bottom: 1.5rem; }
-        .text-lg { font-size: 1.125rem; line-height: 1.75rem; }
-        .text-etrade-purple-light { color: var(--etrade-purple-light); }
-        .mb-8 { margin-bottom: 2rem; }
-        .max-w-xs { max-width: 20rem; }
-        .sm\:max-w-none { max-width: none; }
-        .sm\:flex { display: flex; }
-        .sm\:justify-center { justify-content: center; }
-        .md\:justify-start { justify-content: flex-start; }
-        .space-y-4 > * + * { margin-top: 1rem; }
-        .sm\:space-y-0 > * + * { margin-top: 0; }
-        .sm\:space-x-4 > * + * { margin-left: 1rem; }
-        .mb-12 { margin-bottom: 3rem; }
-        .md\:mb-0 { margin-bottom: 0; }
-        .w-full { width: 100%; }
-        .bg-gradient-to-tr { background-image: linear-gradient(to top right, var(--tw-gradient-stops)); }
-        .from-etrade-purple { --tw-gradient-from: var(--etrade-purple); --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to, rgba(92, 45, 145, 0)); }
-        .to-etrade-purple-light { --tw-gradient-to: var(--etrade-purple-light); }
-        .shadow-sm { box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05); }
-        .relative { position: relative; }
-        .before\:absolute::before { position: absolute; }
-        .before\:inset-0::before { top: 0; right: 0; bottom: 0; left: 0; }
-        .before\:bg-etrade-purple::before { background-color: var(--etrade-purple); }
-        .before\:bg-opacity-60::before { --tw-bg-opacity: 0.6; }
-        .before\:-z-10::before { z-index: -10; }
-        .before\:rounded-full::before { border-radius: 9999px; }
-        .rounded-full { border-radius: 9999px; }
-        .hover\:bg-etrade-purple-light:hover { background-color: var(--etrade-purple-light); }
-
-        /* Header */
-        header {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            border-bottom: 1px solid var(--gray-200);
-        }
-
-        /* Hero Section */
-        .hero-section {
-            background: linear-gradient(135deg, var(--etrade-purple) 0%, var(--etrade-purple-light) 100%);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .hero-section::before {
-            content: '';
-            position: absolute;
+        .header {
+            background: var(--surface);
+            padding: 20px 24px;
+            border-bottom: 1px solid var(--border);
+            position: sticky;
             top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="white" opacity="0.1"/><circle cx="75" cy="75" r="1" fill="white" opacity="0.1"/><circle cx="50" cy="10" r="0.5" fill="white" opacity="0.1"/><circle cx="10" cy="60" r="0.5" fill="white" opacity="0.1"/><circle cx="90" cy="40" r="0.5" fill="white" opacity="0.1"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
-            opacity: 0.3;
+            z-index: 1000;
+            backdrop-filter: blur(8px);
         }
 
-        /* Form Styles */
-                 .form-container {
-             background: var(--white);
-             border-radius: 20px;
-             box-shadow: 0 25px 50px -12px rgba(36, 16, 86, 0.25);
-             margin: 2rem auto;
-             max-width: 1200px;
-             overflow: hidden;
-         }
-
-        .form-section {
-            padding: 3rem 2rem;
-            background: var(--white);
+        .header-content {
+            max-width: 1240px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
         }
 
-        .form-section h3 {
-            color: var(--etrade-purple);
-            font-weight: 600;
-            margin-bottom: 2rem;
-            font-size: 1.5rem;
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            font-family: 'Google Sans', sans-serif;
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--text-primary);
+            text-decoration: none;
         }
 
-        .form-control, .form-select {
-            border: 2px solid var(--gray-200);
-            border-radius: 12px;
-            padding: 0.75rem 1rem;
-            font-size: 0.95rem;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            background: var(--white);
-            width: 100%;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        .logo img {
+            height: 48px;
         }
 
-        .form-control:focus, .form-select:focus {
-            border-color: var(--etrade-purple);
-            box-shadow: 0 0 0 3px rgba(36, 16, 86, 0.1), 0 4px 12px rgba(36, 16, 86, 0.1);
-            outline: none;
-            transform: translateY(-1px);
-        }
-        
-        .form-control:hover, .form-select:hover {
-            border-color: var(--gray-300);
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        }
-        
-        /* Glow or Gradient Border on Active Fields */
-        input[type="time"]:focus, input[type="date"]:focus {
-            border: 1px solid #9b6bff;
-            box-shadow: 0 0 0 2px rgba(155, 107, 255, 0.2);
-            transition: all 0.2s ease-in-out;
+        .hero {
+            text-align: center;
+            padding: 80px 24px 60px;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e8f0fe 100%);
         }
 
-        .form-label {
-            font-weight: 600;
-            color: var(--gray-700);
-            margin-bottom: 0.5rem;
+        .hero h1 {
+            font-family: 'Google Sans', sans-serif;
+            font-size: 48px;
+            font-weight: 500;
+            margin: 0 0 16px;
+            color: var(--text-primary);
+        }
+
+        .hero p {
+            font-size: 20px;
+            color: var(--text-secondary);
+            max-width: 720px;
+            margin: 0 auto 40px;
+        }
+
+        .container {
+            max-width: 1240px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        .card {
+            background: var(--surface);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow-2);
+            padding: 32px;
+            margin-bottom: 32px;
+        }
+
+        .card-title {
+            font-family: 'Google Sans', sans-serif;
+            font-size: 24px;
+            font-weight: 500;
+            margin: 0 0 24px;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .card-title .material-icons {
+            color: var(--accent);
+        }
+
+        /* Form Controls */
+        .form-group {
+            margin-bottom: 24px;
+        }
+
+        label {
             display: block;
+            font-weight: 500;
+            margin-bottom: 8px;
+            color: var(--text-primary);
         }
 
-                 .btn-primary {
-             background: var(--etrade-purple-light);
-             border: none;
-             border-radius: 12px;
-             padding: 1rem 2rem;
-             font-weight: 600;
-             font-size: 1.1rem;
-             color: var(--white);
-             transition: all 0.3s ease;
-             box-shadow: 0 4px 15px rgba(86, 39, 216, 0.3);
-             cursor: pointer;
-         }
+        input[type="text"],
+        input[type="date"],
+        input[type="time"],
+        select {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            font-size: 16px;
+            transition: all 0.2s;
+        }
 
-         .btn-primary:hover {
-             transform: translateY(-2px);
-             box-shadow: 0 8px 25px rgba(86, 39, 216, 0.4);
-             background: var(--etrade-purple);
-         }
-         
-         .btn-primary:disabled {
-             opacity: 0.7;
-             cursor: not-allowed;
-             transform: none;
-         }
-         
-         /* Enhanced Button Styles */
-         .btn {
-             display: inline-flex;
-             align-items: center;
-             justify-content: center;
-             gap: 0.5rem;
-             padding: 0.75rem 1.5rem;
-             border: none;
-             border-radius: 12px;
-             font-weight: 600;
-             font-size: 0.95rem;
-             text-decoration: none;
-             cursor: pointer;
-             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-             position: relative;
-             overflow: hidden;
-             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-         }
-         
-         .btn::before {
-             content: '';
-             position: absolute;
-             top: 0;
-             left: -100%;
-             width: 100%;
-             height: 100%;
-             background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-             transition: left 0.5s;
-         }
-         
-         .btn:hover::before {
-             left: 100%;
-         }
-         
-         .btn-outline-primary {
-             background: transparent;
-             color: var(--etrade-purple);
-             border: 2px solid var(--etrade-purple);
-             box-shadow: 0 2px 8px rgba(36, 16, 86, 0.1);
-         }
-         
-         .btn-outline-primary:hover {
-             background: var(--etrade-purple);
-             color: var(--white);
-             transform: translateY(-2px);
-             box-shadow: 0 8px 20px rgba(36, 16, 86, 0.3);
-         }
-         
-         .btn-outline-primary:active {
-             transform: translateY(0);
-             box-shadow: 0 4px 12px rgba(36, 16, 86, 0.2);
-         }
-         
-         .btn-outline-primary:disabled {
-             opacity: 0.6;
-             cursor: not-allowed;
-             transform: none;
-             box-shadow: 0 2px 8px rgba(36, 16, 86, 0.1);
-         }
-         
-         .btn-outline-primary:disabled:hover {
-             background: transparent;
-             color: var(--etrade-purple);
-             transform: none;
-             box-shadow: 0 2px 8px rgba(36, 16, 86, 0.1);
-         }
-         
-         .fa-spin {
-             animation: fa-spin 2s infinite linear;
-         }
-         
-         @keyframes fa-spin {
-             0% { transform: rotate(0deg); }
-             100% { transform: rotate(360deg); }
-         }
+        input:focus, select:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(26, 115, 232, 0.2);
+        }
 
-        .alert {
-            border-radius: 12px;
+        /* Asset Grid */
+        .asset-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 16px;
+            margin-top: 12px;
+        }
+
+        .asset-btn {
+            padding: 20px 12px;
+            border: 2px solid var(--border);
+            border-radius: var(--radius-sm);
+            background: var(--surface);
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-weight: 500;
+        }
+
+        .asset-btn:hover {
+            border-color: var(--accent);
+            box-shadow: var(--shadow-1);
+        }
+
+        .asset-btn.active {
+            background: var(--accent);
+            color: white;
+            border-color: var(--accent);
+            box-shadow: var(--shadow-2);
+        }
+
+        .asset-btn i {
+            font-size: 28px;
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        /* Timeframe Selector */
+        .timeframe-selector {
+            display: flex;
+            background: #F1F3F4;
+            border-radius: var(--radius-sm);
+            padding: 6px;
+            gap: 6px;
+            border: 1px solid var(--border);
+            overflow-x: auto;
+            scrollbar-width: none;
+        }
+
+        .timeframe-selector::-webkit-scrollbar { display: none; }
+
+        .timeframe-btn {
+            flex: 1;
+            min-width: 70px;
+            padding: 10px 16px;
+            border-radius: 8px;
+            background: transparent;
             border: none;
-            padding: 1.5rem;
-            margin-bottom: 1.5rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
         }
 
-                 .alert-info {
-             background: linear-gradient(135deg, rgba(36, 16, 86, 0.1) 0%, rgba(86, 39, 216, 0.1) 100%);
-             border-left: 4px solid var(--etrade-purple);
-             color: var(--gray-700);
-         }
-
-        .alert-warning {
-            background: linear-gradient(135deg, rgba(245, 158, 11, 0.1) 0%, rgba(251, 191, 36, 0.1) 100%);
-            border-left: 4px solid #F59E0B;
-            color: #92400E;
+        .timeframe-btn:hover {
+            background: rgba(26,115,232,0.1);
         }
 
-        .alert-danger {
-            background: linear-gradient(135deg, rgba(239, 68, 68, 0.1) 0%, rgba(248, 113, 113, 0.1) 100%);
-            border-left: 4px solid #EF4444;
+        .timeframe-btn.active {
+            background: var(--accent);
+            color: white;
+        }
+
+        /* Buttons */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 50px;
+            font-weight: 500;
+            font-size: 15px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-primary {
+            background: var(--accent);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--accent-hover);
+            box-shadow: var(--shadow-2);
+        }
+
+        .btn-primary:disabled {
+            background: #9E9E9E;
+            cursor: not-allowed;
+        }
+
+        /* Checkbox */
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-top: 8px;
+        }
+
+        /* Alerts */
+        .alert {
+            padding: 16px;
+            border-radius: var(--radius-sm);
+            margin: 16px 0;
+            border-left: 4px solid;
+        }
+
+        .alert-info {
+            background: #EFF6FF;
+            border-color: var(--accent);
+            color: #0C4A6E;
+        }
+
+        .alert-success {
+            background: var(--success-bg);
+            border-color: var(--success);
+            color: var(--success);
+        }
+
+        .alert-error {
+            background: #FEF2F2;
+            border-color: #EF4444;
             color: #991B1B;
         }
 
-        .row { display: flex; flex-wrap: wrap; margin-left: -0.75rem; margin-right: -0.75rem; }
-        .col-md-6 { flex: 0 0 50%; max-width: 50%; padding-left: 0.75rem; padding-right: 0.75rem; }
-        .col-md-4 { flex: 0 0 33.333333%; max-width: 33.333333%; padding-left: 0.75rem; padding-right: 0.75rem; }
-        .col-md-12 { flex: 0 0 100%; max-width: 100%; padding-left: 0.75rem; padding-right: 0.75rem; }
-        .mb-4 { margin-bottom: 1.5rem; }
-        .mb-3 { margin-bottom: 1rem; }
-        .mt-2 { margin-top: 0.5rem; }
-        .mt-3 { margin-top: 1rem; }
-        .text-center { text-align: center; }
-        .fw-bold { font-weight: 600; }
-        .text-muted { color: var(--gray-500) !important; }
-        .d-flex { display: flex; }
-        .align-items-center { align-items: center; }
-        .justify-content-center { justify-content: center; }
-        .w-100 { width: 100%; }
-        .h-100 { height: 100%; }
-        .visually-hidden { position: absolute !important; width: 1px !important; height: 1px !important; padding: 0 !important; margin: -1px !important; overflow: hidden !important; clip: rect(0, 0, 0, 0) !important; white-space: nowrap !important; border: 0 !important; }
-
-                 .form-check-input:checked {
-             background-color: var(--etrade-purple);
-             border-color: var(--etrade-purple);
-         }
-
-         .form-check-input:focus {
-             border-color: var(--etrade-purple);
-             box-shadow: 0 0 0 0.25rem rgba(36, 16, 86, 0.25);
-         }
-
-        .form-check {
-            display: flex;
-            align-items: center;
-            margin-bottom: 0.5rem;
+        @media (max-width: 768px) {
+            .hero h1 { font-size: 36px; }
+            .card { padding: 24px; }
+            .asset-grid { grid-template-columns: repeat(3, 1fr); }
         }
-
-        .form-check-input {
-            margin-right: 0.5rem;
-        }
-
-        .form-check-label {
-            margin-bottom: 0;
-        }
-
-                 .me-3 { margin-right: 0.75rem; }
-         .mt-1 { margin-top: 0.25rem; }
-         
-         /* Asset Button Grid Styles */
-         .asset-button-grid {
-             display: grid;
-             grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-             gap: 0.75rem;
-             margin-top: 0.5rem;
-         }
-         
-         .asset-btn {
-             background: var(--gray-100);
-             border: 2px solid var(--gray-200);
-             border-radius: 16px;
-             padding: 1rem 0.75rem;
-             font-weight: 600;
-             font-size: 1rem;
-             color: var(--gray-700);
-             transition: all 0.3s ease;
-             cursor: pointer;
-             display: flex;
-             flex-direction: column;
-             align-items: center;
-             gap: 0.5rem;
-             min-height: 80px;
-             justify-content: center;
-         }
-         
-         .asset-btn:hover {
-             background: var(--gray-200);
-             border-color: var(--etrade-purple-light);
-             transform: translateY(-2px);
-             box-shadow: 0 4px 12px rgba(86, 39, 216, 0.15);
-         }
-         
-         .asset-btn.active {
-             background: var(--etrade-purple-light);
-             border-color: var(--etrade-purple-light);
-             color: var(--white);
-             transform: translateY(-2px);
-             box-shadow: 0 8px 20px rgba(86, 39, 216, 0.3);
-         }
-         
-         .asset-btn i {
-             font-size: 1.5rem;
-             margin-bottom: 0.25rem;
-         }
-         
-         .custom-asset-btn {
-             background: linear-gradient(135deg, var(--gray-100) 0%, var(--gray-200) 100%);
-             border: 2px dashed var(--gray-400);
-         }
-         
-         .custom-asset-btn:hover {
-             background: linear-gradient(135deg, var(--etrade-purple-light) 0%, var(--etrade-purple) 100%);
-             border-color: var(--etrade-purple-light);
-             color: var(--white);
-         }
-         
-         .input-group {
-             display: flex;
-             gap: 0.75rem;
-             align-items: stretch;
-         }
-         
-         .input-group .form-control {
-             flex: 1;
-             border-radius: 12px;
-             border: 2px solid var(--gray-200);
-             padding: 0.75rem 1rem;
-             font-size: 0.95rem;
-             transition: all 0.3s ease;
-         }
-         
-         .input-group .form-control:focus {
-             border-color: var(--etrade-purple);
-             box-shadow: 0 0 0 3px rgba(36, 16, 86, 0.1);
-             outline: none;
-         }
-         
-         .input-group .btn {
-             border-radius: 12px;
-             white-space: nowrap;
-             min-width: 100px;
-         }
-
-         /* Panel Layout Styles */
-         .panel-group {
-             display: grid;
-             grid-template-columns: 1fr 1fr;
-             gap: 2rem;
-             margin-bottom: 2rem;
-         }
-         
-         .panel {
-             background: var(--white);
-             border: 2px solid var(--gray-200);
-             border-radius: 16px;
-             padding: 1.5rem;
-             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-             transition: all 0.3s ease;
-         }
-         
-         .panel:hover {
-             border-color: var(--etrade-purple-light);
-             box-shadow: 0 8px 24px rgba(86, 39, 216, 0.1);
-         }
-         
-         .panel-title {
-             color: var(--etrade-purple);
-             font-weight: 600;
-             font-size: 1.4rem;
-             margin: 0.5rem 0 1.5rem 0;
-             padding-bottom: 0.5rem;
-             border-bottom: 2px solid var(--gray-100);
-             display: flex;
-             align-items: center;
-             justify-content: center;
-             gap: 0.75rem;
-         }
-         
-         .panel-title i {
-             font-size: 1.5rem;
-             color: var(--etrade-purple-light);
-             background: linear-gradient(135deg, var(--etrade-purple-light) 0%, var(--etrade-purple) 100%);
-             -webkit-background-clip: text;
-             -webkit-text-fill-color: transparent;
-             background-clip: text;
-             filter: drop-shadow(0 2px 4px rgba(86, 39, 216, 0.2));
-         }
-         
-         .action-panel .panel-title {
-             color: var(--white);
-             border-bottom-color: rgba(255, 255, 255, 0.2);
-         }
-         
-         .action-panel .panel-title i {
-             color: var(--white);
-             background: linear-gradient(135deg, var(--white) 0%, rgba(255, 255, 255, 0.8) 100%);
-             -webkit-background-clip: text;
-             -webkit-text-fill-color: transparent;
-             background-clip: text;
-             filter: drop-shadow(0 2px 4px rgba(255, 255, 255, 0.3));
-         }
-         
-         /* Modern Hero Button */
-         .hero-btn {
-             display: inline-flex;
-             align-items: center;
-             gap: 1rem;
-             background: linear-gradient(135deg, var(--etrade-purple-light) 0%, var(--etrade-purple) 100%);
-             color: var(--white);
-             padding: 1.25rem 2.5rem;
-             border-radius: 50px;
-             text-decoration: none;
-             font-weight: 600;
-             font-size: 1.1rem;
-             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-             box-shadow: 0 8px 25px rgba(86, 39, 216, 0.3);
-             position: relative;
-             overflow: hidden;
-         }
-         
-         .hero-btn::before {
-             content: '';
-             position: absolute;
-             top: 0;
-             left: -100%;
-             width: 100%;
-             height: 100%;
-             background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-             transition: left 0.6s;
-         }
-         
-         .hero-btn:hover::before {
-             left: 100%;
-         }
-         
-         .hero-btn:hover {
-             transform: translateY(-3px);
-             box-shadow: 0 12px 35px rgba(86, 39, 216, 0.4);
-             background: linear-gradient(135deg, var(--etrade-purple) 0%, var(--etrade-purple-light) 100%);
-         }
-         
-         .hero-btn:active {
-             transform: translateY(-1px);
-             box-shadow: 0 6px 20px rgba(86, 39, 216, 0.3);
-         }
-         
-         .hero-btn-text {
-             position: relative;
-             z-index: 1;
-         }
-         
-         .hero-btn-icon {
-             position: relative;
-             z-index: 1;
-             transition: transform 0.3s ease;
-         }
-         
-         .hero-btn:hover .hero-btn-icon {
-             transform: translateX(4px);
-         }
-         
-         /* Modern Header Button */
-         .header-btn {
-             display: inline-flex;
-             align-items: center;
-             gap: 0.75rem;
-             background: var(--white);
-             color: var(--etrade-purple);
-             padding: 0.75rem 1.5rem;
-             border-radius: 25px;
-             text-decoration: none;
-             font-weight: 600;
-             font-size: 0.95rem;
-             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-             border: 2px solid transparent;
-         }
-         
-         .header-btn:hover {
-             background: var(--etrade-purple);
-             color: var(--white);
-             transform: translateY(-2px);
-             box-shadow: 0 8px 25px rgba(36, 16, 86, 0.2);
-             border-color: var(--etrade-purple);
-         }
-         
-         .header-btn:active {
-             transform: translateY(0);
-             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-         }
-         
-         .header-btn-text {
-             position: relative;
-             z-index: 1;
-         }
-         
-         .header-btn-icon {
-             position: relative;
-             z-index: 1;
-             transition: transform 0.3s ease;
-         }
-         
-         .header-btn:hover .header-btn-icon {
-             transform: translateX(3px);
-         }
-         
-         .action-panel {
-             grid-column: 1 / -1;
-             background: var(--white);
-             border: 2px solid var(--gray-200);
-             color: var(--gray-800);
-         }
-         
-         .action-panel .panel-title {
-             color: var(--white);
-             border-bottom-color: rgba(255, 255, 255, 0.2);
-         }
-         
-         .form-group {
-             margin-bottom: 1.5rem;
-         }
-         
-         .form-group:last-child {
-             margin-bottom: 0;
-         }
-         
-         /* Security Panel Styles */
-         .security-panel {
-             background: #FEFBF3;
-             border: 2px solid #E5E7EB;
-             border-radius: 16px;
-         }
-         
-         .security-panel .panel-title {
-             color: #374151;
-             border-bottom: 2px solid #E5E7EB;
-             margin-bottom: 1.5rem;
-             padding-bottom: 1rem;
-         }
-         
-         .security-info {
-             display: flex;
-             flex-direction: column;
-             gap: 1.5rem;
-         }
-         
-         .security-item {
-             display: flex;
-             align-items: flex-start;
-             gap: 1rem;
-             padding: 1rem;
-             background: #FFFFFF;
-             border-radius: 12px;
-             border: 1px solid #F3F4F6;
-             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-         }
-         
-         .security-icon {
-             color: #F59E0B;
-             font-size: 1.3rem;
-             margin-top: 0.1rem;
-             flex-shrink: 0;
-             background: #FEF3C7;
-             padding: 0.5rem;
-             border-radius: 8px;
-         }
-         
-         .security-content {
-             color: #374151;
-             line-height: 1.6;
-         }
-         
-         .security-content strong {
-             color: #1F2937;
-             font-size: 1.1rem;
-             display: block;
-             margin-bottom: 0.5rem;
-         }
-         
-         .security-content p {
-             margin: 0;
-             color: #6B7280;
-         }
-         
-         /* Title Styles */
-         .title-main {
-             display: inline;
-             font-weight: 700;
-         }
-         
-         .title-highlight {
-             display: inline;
-             font-weight: 700;
-             color: white;
-             position: relative;
-         }
-         
-         .title-highlight::after {
-             content: '';
-             position: absolute;
-             bottom: -2px;
-             left: 0;
-             right: 0;
-             height: 2px;
-             background: var(--etrade-purple-light);
-             border-radius: 1px;
-         }
-         
-         /* Mobile title adjustments */
-         @media (max-width: 768px) {
-             .h1 {
-                 font-size: 2rem;
-                 line-height: 1.2;
-             }
-         }
-
-         /* Timeframe Selector Styles */
-         .timeframe-selector {
-             display: flex;
-             background: var(--gray-100);
-             border-radius: 12px;
-             padding: 4px;
-             gap: 2px;
-             border: 2px solid var(--gray-200);
-             position: relative;
-             overflow: hidden;
-         }
-         
-         .timeframe-btn {
-             flex: 1;
-             background: transparent;
-             border: none;
-             border-radius: 8px;
-             padding: 12px 16px;
-             font-weight: 600;
-             font-size: 0.9rem;
-             color: var(--gray-600);
-             cursor: pointer;
-             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-             position: relative;
-             min-width: 0;
-             text-align: center;
-         }
-         
-         .timeframe-btn:hover {
-             background: rgba(86, 39, 216, 0.1);
-             color: var(--etrade-purple);
-             transform: translateY(-1px);
-         }
-         
-         .timeframe-btn.active {
-             background: var(--etrade-purple-light);
-             color: var(--white);
-             box-shadow: 0 4px 12px rgba(86, 39, 216, 0.3);
-             transform: translateY(-1px);
-         }
-         
-         .timeframe-btn.active::before {
-             content: '';
-             position: absolute;
-             top: -2px;
-             left: -2px;
-             right: -2px;
-             bottom: -2px;
-             background: linear-gradient(135deg, var(--etrade-purple-light), var(--etrade-purple));
-             border-radius: 10px;
-             z-index: -1;
-             opacity: 0.8;
-             animation: glow 2s ease-in-out infinite alternate;
-         }
-         
-         @keyframes glow {
-             from {
-                 box-shadow: 0 0 5px rgba(86, 39, 216, 0.5);
-             }
-             to {
-                 box-shadow: 0 0 20px rgba(86, 39, 216, 0.8), 0 0 30px rgba(86, 39, 216, 0.4);
-             }
-         }
-         
-         /* Mobile responsive */
-         @media (max-width: 768px) {
-             .timeframe-selector {
-                 overflow-x: auto;
-                 scrollbar-width: none;
-                 -ms-overflow-style: none;
-             }
-             
-             .timeframe-selector::-webkit-scrollbar {
-                 display: none;
-             }
-             
-             .timeframe-btn {
-                 flex-shrink: 0;
-                 min-width: 60px;
-                 padding: 10px 12px;
-                 font-size: 0.8rem;
-             }
-         }
-
-                 /* Banner Image Styles */
-         .hero-section img {
-             max-width: 100%;
-             height: auto;
-             object-fit: cover;
-             border-radius: 12px;
-             box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
-         }
-
-         @media (max-width: 768px) {
-             .col-md-6, .col-md-4 { flex: 0 0 100%; max-width: 100%; }
-             .form-container { margin: 1rem; border-radius: 16px; }
-             .form-section, .results-section { padding: 2rem 1rem; }
-             
-             /* Mobile panel layout */
-             .panel-group {
-                 grid-template-columns: 1fr;
-                 gap: 1rem;
-             }
-             
-             .panel {
-                 padding: 1rem;
-             }
-             
-             /* Mobile banner adjustments */
-             .hero-section img {
-                 max-width: 80%;
-                 margin: 2rem auto;
-                 display: block;
-             }
-             
-             /* Mobile asset button grid */
-             .asset-button-grid {
-                 grid-template-columns: repeat(2, 1fr);
-                 gap: 0.5rem;
-             }
-             
-             .asset-btn {
-                 padding: 0.75rem 0.5rem;
-                 font-size: 0.9rem;
-                 min-height: 70px;
-             }
-             
-             .asset-btn i {
-                 font-size: 1.2rem;
-             }
-         }
     </style>
+-->
 </head>
 
 <body>
-    <!-- Page wrapper -->
+     <!-- Header -->
+    <header class="header">
+        <div class="header-content">
+            <a href="/" class="logo">
+                <img src="/assets/darklogo.png" alt="granariaTWO">
+                <span>granariaTWO - Trading Analysis Agent</span>
+            </a>
+        </div>
+    </header>
+
+   <!-- Hero -->
+
+
+    <div class="container">
+
+        <!-- Main Form Card -->
+        <div class="card">
+
+
+            <!-- Asset Selection -->
+            <div class="form-group">
+                <label>Asset</label>
+                <div class="asset-grid" id="assetButtonGrid">
+                    <div class="asset-btn active" data-asset="BTC" onclick="selectAsset(this, 'BTC')">
+                        <i class="fab fa-bitcoin"></i>
+                        <div>BTC</div>
+                    </div>
+                    <div class="asset-btn" data-asset="ETH" onclick="selectAsset(this, 'ETH')">
+                        <i class="fab fa-ethereum"></i>
+                        <div>ETH</div>
+                    </div>
+                    <div class="asset-btn" data-asset="SOL" onclick="selectAsset(this, 'SOL')">
+                        <i class="fas fa-sun"></i>
+                        <div>SOL</div>
+                    </div>
+                    <div class="asset-btn" data-asset="ADA" onclick="selectAsset(this, 'ADA')">
+                        <i class="fas fa-feather"></i>
+                        <div>ADA</div>
+                    </div>
+                    <div class="asset-btn" data-asset="XRP" onclick="selectAsset(this, 'XRP')">
+                        <i class="fas fa-water"></i>
+                        <div>XRP</div>
+                    </div>
+                    <div class="asset-btn" onclick="showCustomAssetInput()">
+                        <i class="fas fa-plus"></i>
+                        <div>Custom</div>
+                    </div>
+                </div>
+
+                <div id="customAssetDiv" style="display:none; margin-top:16px;">
+                    <div style="display:flex; gap:12px;">
+                        <input type="text" id="customAssetInput" placeholder="Enter symbol (e.g. AAPL)" style="flex:1;">
+                        <button class="btn btn-primary" onclick="confirmCustomAsset()">Add</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Timeframe -->
+            <div class="form-group">
+                <label>Timeframe</label>
+                <div class="timeframe-selector">
+                    <button class="timeframe-btn" data-timeframe="15m" onclick="selectTimeframe(this, '15m')">15m</button>
+                    <button class="timeframe-btn active" data-timeframe="1h" onclick="selectTimeframe(this, '1h')">1h</button>
+                    <button class="timeframe-btn" data-timeframe="4h" onclick="selectTimeframe(this, '4h')">4h</button>
+                    <button class="timeframe-btn" data-timeframe="1d" onclick="selectTimeframe(this, '1d')">1d</button>
+                    <button class="timeframe-btn" data-timeframe="1w" onclick="selectTimeframe(this, '1w')">1W</button>
+                </div>
+            </div>
+
+            <!-- Date Range -->
+            <div class="form-group">
+                <label>Analysis Period</label>
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
+                    <div>
+                        <label>Start Date</label>
+                        <input type="date" id="startDate">
+                    </div>
+                    <div>
+                        <label>Start Time</label>
+                        <input type="time" id="startTime" value="00:00">
+                    </div>
+                    <div>
+                        <label>End Date</label>
+                        <input type="date" id="endDate">
+                    </div>
+                    <div>
+                        <label>End Time</label>
+                        <input type="time" id="endTime" value="23:59">
+                    </div>
+                </div>
+                <div class="checkbox-group">
+                    <input type="checkbox" id="useCurrentTime">
+                    <label for="useCurrentTime">Use current time as end</label>
+                </div>
+            </div>
+
+            <!-- Run Button -->
+            <div style="text-align:center; margin-top:32px;">
+                <button id="analyzeBtn" class="btn btn-primary" onclick="runAnalysis()">
+                    <span class="material-icons">play_arrow</span>
+                    Run Analysis
+                </button>
+            </div>
+        </div>
+
+        <!-- Info Alert -->
+        <div class="alert alert-info">
+            <strong>Live Data Mode:</strong> Analysis uses real-time market data with your selected timeframe and date range.
+        </div>
+
+    </div>
+
+
+
+    <!-- Font Awesome (only if you still use crypto icons) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/js/all.min.js"></script>
+
+
+
+
+
+
+
+
+    <!-- Page wrapper ---------------------------------------------------------------------------------------- -->
     <div class="flex flex-col min-h-screen overflow-hidden">
 
 
@@ -873,57 +441,10 @@
         <!-- Page content -->
         <main class="grow">
 
-            <!-- Hero -->
-            <section class="hero-section relative">
-                <div class="max-w-6xl mx-auto px-4 sm:px-6">
-                    <div class="pt-8 md:pt-12 md:pb-20">
 
-                        <!-- Hero content -->
-                        <div class="relative max-w-xl mx-auto md:max-w-none text-center md:text-left">
-                        
-                                                    <!-- Content -->
-                        <div class="md:w-[800px] mx-auto text-center">
 
-                                <!-- Copy -->
-                                <h1 class="h1 text-white mb-6">
-                                    <div class="text-center">
-                                        
-                                    </div>
-                                    <div style="display: flex; align-items: center; justify-content: center; gap: 0rem; margin-bottom: 0.5rem;">
-                                        <img src="assets/darklogo.png" alt="QuantAgent Logo" style="width: 7rem; height: 7rem; object-fit: contain; background: transparent; box-shadow: none; border: none; border-radius: 0; transform: translateY(0.5rem);">
-                                        <span style="font-size: 4.0rem; font-weight: 700; color: white; line-height: 1.0;">QuantAgent:</span>
-                                    </div>
-                                    <div class="text-center">
-                                        <span class="title-highlight">Multi-Agent Trading System</span>
-                                    </div>
-                                </h1>
-                                <p class="text-lg text-white mb-8" style="font-size: 1.3rem; margin-top: 1.5rem;">Advanced multi-agent system combining technical indicators, pattern recognition, and trend analysis for comprehensive market insights.</p>
 
-                                <!-- Buttons -->
-                                <div class="max-w-xs mx-auto sm:max-w-none sm:flex sm:justify-center mb-12 md:mb-0">
-                                    <div>
-                                        <a class="hero-btn" href="#analysis">
-                                            <span class="hero-btn-text">Start Analysis</span>
-                                            <span class="hero-btn-icon">
-                                                <i class="fas fa-arrow-right"></i>
-                                            </span>
-                                        </a>
-                                    </div>
-                                </div>
-                                
-                            </div>
-                        
-                            <!-- Parent container with relative positioning -->
-                <!-- <div class="w-full md:w-[500px] mt-10 md:mt-0 md:ml-10 flex-shrink-0">
-                        <img src="assets/banner.png" alt="QuantAgent Banner" class="w-full h-auto rounded-lg shadow-xl" />
-                    </div> -->
 
-                        
-                        </div>
-
-                    </div>
-                </div>
-            </section>
 
                         <!-- Analysis Form Section -->
             <section id="analysis" class="py-12 md:py-20">
@@ -1144,7 +665,7 @@
                             
                             <!-- Security Information Panel -->
                             <div class="panel security-panel">
-                                <h4 class="panel-title">
+                                <!--h4 class="panel-title">
                                     <i class="fas fa-shield-alt"></i> Security Information
                                 </h4>
                                 
@@ -1171,7 +692,7 @@
                                             <strong>Data Privacy</strong>
                                             <p>All analysis data remains on your local machine</p>
                                         </div>
-                                    </div>
+                                    </div-->
                                 </div>
                             </div>
                         </div>

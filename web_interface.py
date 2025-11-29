@@ -12,13 +12,52 @@ from flask import Flask, jsonify, render_template, request, send_file
 from openai import OpenAI
 
 import static_util
-from trading_graph import TradingGraph
+from tradingGraph import TradingGraph
+
+from dotenv import load_dotenv
+
+from yahoofinanceClient import YahooFinanceClient
 
 app = Flask(__name__)
+
+import logging
+import colorlog
+# Create logger
+logger = logging.getLogger("my_app")
+logger.setLevel(logging.DEBUG)
+# Create console handler with colors
+handler = logging.StreamHandler()
+handler.setLevel(logging.DEBUG)
+
+# Colorful format
+handler.setFormatter(colorlog.ColoredFormatter(
+    "%(log_color)s%(asctime)s - %(name)s - %(levelname)s - %(filename)s:%(lineno)d - %(message)s",
+    datefmt="%H:%M:%S",
+    log_colors={
+        'DEBUG':    'cyan',
+        'INFO':     'green',
+        'WARNING':  'yellow',
+        'ERROR':     'red',
+        'CRITICAL': 'red,bg_white',
+    }
+))
 
 
 class WebTradingAnalyzer:
     def __init__(self):
+
+        load_dotenv()
+        self.yfclient = YahooFinanceClient()
+        # ------------------------------------------------------------------
+
+        logger.setLevel(logging.DEBUG)  # add this line
+
+        print('def __init__(self):')
+
+
+
+
+
         """Initialize the web trading analyzer."""
         from default_config import DEFAULT_CONFIG
         # Start with default config (OpenAI)
@@ -29,48 +68,10 @@ class WebTradingAnalyzer:
         # Ensure data dir exists
         self.data_dir.mkdir(parents=True, exist_ok=True)
 
-        # Available assets and their display names
-        self.asset_mapping = {
-            "SPX": "S&P 500",
-            "BTC": "Bitcoin",
-            "GC": "Gold Futures",
-            "NQ": "Nasdaq Futures",
-            "CL": "Crude Oil",
-            "ES": "E-mini S&P 500",
-            "DJI": "Dow Jones",
-            "QQQ": "Invesco QQQ Trust",
-            "VIX": "Volatility Index",
-            "DXY": "US Dollar Index",
-            "AAPL": "Apple Inc.",  # New asset
-            "TSLA": "Tesla Inc.",  # New asset
-        }
+        self.asset_mapping  = self.yfclient.ASSET_MAPPING
+        self.yfinance_symbols = self.yfclient.YFINANCE_SYMBOLS
+        self.yfinance_intervals = self.yfclient.YFINANCE_INTERVALS
 
-        # Yahoo Finance symbol mapping
-        self.yfinance_symbols = {
-            "SPX": "^GSPC",  # S&P 500
-            "BTC": "BTC-USD",  # Bitcoin
-            "GC": "GC=F",  # Gold Futures
-            "NQ": "NQ=F",  # Nasdaq Futures
-            "CL": "CL=F",  # Crude Oil
-            "ES": "ES=F",  # E-mini S&P 500
-            "DJI": "^DJI",  # Dow Jones
-            "QQQ": "QQQ",  # Invesco QQQ Trust
-            "VIX": "^VIX",  # Volatility Index
-            "DXY": "DX-Y.NYB",  # US Dollar Index
-        }
-
-        # Yahoo Finance interval mapping
-        self.yfinance_intervals = {
-            "1m": "1m",
-            "5m": "5m",
-            "15m": "15m",
-            "30m": "30m",
-            "1h": "1h",
-            "4h": "4h",  # yfinance supports 4h natively!
-            "1d": "1d",
-            "1w": "1wk",
-            "1mo": "1mo",
-        }
 
         # Load persisted custom assets
         self.custom_assets_file = self.data_dir / "custom_assets.json"
@@ -232,7 +233,7 @@ class WebTradingAnalyzer:
         files = list(asset_dir.glob(pattern))
         return sorted(files)
 
-    def run_analysis(
+    def do_analysis(
         self, df: pd.DataFrame, asset_name: str, timeframe: str
     ) -> Dict[str, Any]:
         """Run the trading analysis on the provided DataFrame."""
@@ -318,7 +319,10 @@ class WebTradingAnalyzer:
 
         except Exception as e:
             error_msg = str(e)
-            
+            print(error_msg)
+
+
+
             # Get current provider from config
             provider = self.config.get("agent_llm_provider", "openai")
             if provider == "openai":
@@ -487,7 +491,7 @@ class WebTradingAnalyzer:
             return {"valid": False, "error": f"Invalid date/time format: {str(e)}"}
 
     def validate_api_key(self, provider: str = None) -> Dict[str, Any]:
-        """Validate the current API key by making a simple test call."""
+        print("Validate the current API key by making a simple test call.")
         try:
             # Get provider from config if not provided
             if provider is None:
@@ -495,7 +499,8 @@ class WebTradingAnalyzer:
             
             if provider == "openai":
                 from openai import OpenAI
-                client = OpenAI()
+                api_key = os.environ.get("OPENAI_API_KEY") or self.config.get("anthropic_api_key", "")
+                client = OpenAI(api_key=api_key)
                 
                 # Make a simple test call
                 _ = client.chat.completions.create(
@@ -508,6 +513,7 @@ class WebTradingAnalyzer:
             elif provider == "anthropic":
                 from anthropic import Anthropic
                 api_key = os.environ.get("ANTHROPIC_API_KEY") or self.config.get("anthropic_api_key", "")
+                print('ANTHROPIC_API_KEY '+api_key)
                 if not api_key:
                     return {
                         "valid": False,
@@ -524,6 +530,7 @@ class WebTradingAnalyzer:
                 )
                 
                 provider_name = "Anthropic"
+
             else:  # qwen
                 from langchain_qwq import ChatQwen
                 api_key = os.environ.get("DASHSCOPE_API_KEY") or self.config.get("qwen_api_key", "")
@@ -619,13 +626,13 @@ analyzer = WebTradingAnalyzer()
 @app.route("/")
 def index():
     """Main landing page - redirect to demo."""
-    return render_template("demo_new.html")
+    return render_template("start.html")
 
 
 @app.route("/demo")
 def demo():
     """Demo page with new interface."""
-    return render_template("demo_new.html")
+    return render_template("start.html")
 
 
 @app.route("/output")
@@ -724,7 +731,9 @@ def analyze():
         display_name = analyzer.asset_mapping.get(asset, asset)
         if display_name is None:
             display_name = asset
-        results = analyzer.run_analysis(df, display_name, timeframe)
+
+        results = analyzer.do_analysis(df, display_name, timeframe)
+
         formatted_results = analyzer.extract_analysis_results(results)
 
         # If redirect is requested, return redirect URL with results
@@ -784,7 +793,8 @@ def save_custom_asset():
     """Save a custom asset symbol server-side for persistence."""
     try:
         data = request.get_json()
-        symbol = (data.get("symbol") or "").strip()
+        symbol: str = ((data.get("symbol") or "").strip()).upper()
+        print('def save_custom_asset():', 'save-custom-asset', symbol)
         if not symbol:
             return jsonify({"success": False, "error": "Symbol required"}), 400
 
@@ -806,9 +816,12 @@ def custom_assets():
         return jsonify({"error": str(e)}), 500
 
 
+
 @app.route("/api/assets")
 def get_assets():
     """API endpoint to get available assets."""
+    logger.debug("def get_assets():")
+
     try:
         assets = analyzer.get_available_assets()
         asset_list = []
@@ -1016,7 +1029,7 @@ def get_image(image_type):
 
 @app.route("/api/validate-api-key", methods=["POST"])
 def validate_api_key():
-    """API endpoint to validate the current API key."""
+    print("@app.route(/api/validate-api-key API endpoint to validate the current API key.")
     try:
         data = request.get_json() or {}
         provider = data.get("provider") or analyzer.config.get("agent_llm_provider", "openai")
@@ -1044,4 +1057,5 @@ if __name__ == "__main__":
     static_dir = Path("static")
     static_dir.mkdir(exist_ok=True)
 
-    app.run(debug=True, host="127.0.0.1", port=5000)
+    # app.run(debug=True, host="127.0.0.1", port=5000)
+    # app.run(host="0.0.0.0", port=5000, threaded=True)
